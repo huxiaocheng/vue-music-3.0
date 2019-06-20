@@ -1,35 +1,48 @@
 <template>
   <div class="recommend">
-    <div class="recommend-content">
-      <div v-if="recommends.length > 0" class="slider-wrapper">
-        <Slider>
-          <div v-for="item in recommends" :key="item.id">
-            <a :href="item.linkUrl">
-              <img :src="item.picUrl" alt>
-            </a>
-          </div>
-        </Slider>
+    <Scroll ref="scroll" class="recommend-content" :data="discList">
+      <div>
+        <div v-if="recommends.length > 0" class="slider-wrapper">
+          <Slider :data="recommends" @imgLoad="imgLoad"/>
+        </div>
+        <div class="recommend-list">
+          <h1 class="list-title">热门歌单推荐</h1>
+          <ul>
+            <li v-for="item in discList" :key="item.dissid" class="item">
+              <div class="icon">
+                <img width="60" height="60" v-lazy="item.imgurl" alt>
+              </div>
+              <div class="text">
+                <h2 class="name" v-html="item.creator.name"/>
+                <p class="desc" v-html="item.dissname"/>
+              </div>
+            </li>
+          </ul>
+        </div>
       </div>
-      <div class="recommend-list">
-        <h1 class="list-title">热门歌单推荐</h1>
-        <ul></ul>
+      <div class="loading-container" v-show="discList.length === 0">
+        <Loading/>
       </div>
-    </div>
+    </Scroll>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
 import Slider from "@/base/slider";
-import { getRecommend } from "@/api/recommend";
+import Scroll from "@/base/scroll";
+import Loading from "@/base/loading";
+import { getRecommend, getDiscList } from "@/api/recommend";
 import { ERR_OK } from "@/api/config";
 
 export default {
   created() {
     this._getRecommend();
+    this._getDiscList();
   },
   data() {
     return {
-      recommends: []
+      recommends: [],
+      discList: []
     };
   },
   methods: {
@@ -39,10 +52,25 @@ export default {
           this.recommends = res.data.slider;
         }
       });
+    },
+    _getDiscList() {
+      getDiscList().then(res => {
+        if (res.code === ERR_OK) {
+          this.discList = res.data.list;
+        }
+      });
+    },
+    imgLoad() {
+      if (!this.checkLoad) {
+        this.$refs["scroll"].refresh();
+        this.checkLoad = true;
+      }
     }
   },
   components: {
-    Slider
+    Slider,
+    Scroll,
+    Loading
   }
 };
 </script>
@@ -63,8 +91,6 @@ export default {
     .slider-wrapper {
       position: relative;
       width: 100%;
-      // height: 0;
-      // padding-top: 40%;
       overflow: hidden;
 
       .slider-content {

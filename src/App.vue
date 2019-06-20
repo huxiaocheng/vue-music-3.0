@@ -2,13 +2,15 @@
   <div>
     <MHeader/>
     <Tab/>
-    <router-view/>
+    <keep-alive>
+      <router-view/>
+    </keep-alive>
   </div>
 </template>
 
 <script>
 import MHeader from "@/components/m-header";
-import Tab from '@/components/tab'
+import Tab from "@/components/tab";
 
 export default {
   components: {
