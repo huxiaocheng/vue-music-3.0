@@ -3,7 +3,7 @@
     <div class="slider-group" ref="slider-group">
       <div v-for="item in data" :key="item.id" class="slider-item">
         <a :href="item.linkUrl">
-          <img :src="item.picUrl" @load='loadImg' alt>
+          <img :src="item.picUrl" @load="loadImg" alt>
         </a>
       </div>
     </div>
@@ -125,7 +125,7 @@ export default {
       }, this.interval);
     },
     loadImg() {
-      this.$emit('imgLoad');
+      this.$emit("imgLoad");
     }
   }
 };
@@ -178,8 +178,10 @@ export default {
       height: 8px;
       border-radius: 50%;
       background: $color-text-l;
+      transition: all 0.2s;
 
       &.active {
+        transform-origin: left;
         width: 20px;
         border-radius: 5px;
         background: $color-text-ll;

@@ -21,6 +21,10 @@ export default {
       default() {
         return [];
       }
+    },
+    listenScroll: {
+      type: Boolean,
+      default: false
     }
   },
   mounted() {
@@ -37,6 +41,11 @@ export default {
         probeType: this.probeType,
         click: this.click
       });
+      if (this.listenScroll) {
+        this.scroll.on("scroll", pos => {
+          this.$emit("scroll", pos);
+        });
+      }
     },
     enable() {
       this.scroll && this.scroll.enable();

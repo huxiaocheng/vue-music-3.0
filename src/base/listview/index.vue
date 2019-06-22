@@ -1,12 +1,24 @@
 <template>
-  <Scroll class="listview" :data="data" ref="listview">
+  <Scroll
+    class="listview"
+    :data="data"
+    ref="listview"
+    @scroll="onWrapScroll"
+    :probeType="3"
+    :listenScroll="true"
+  >
     <ul>
       <li v-for="(group,index) in data" :key="index" class="list-group" ref="group">
         <h2 class="list-group-title">{{group.title}}</h2>
         <ul>
-          <li v-for="(item,index) in group.list" :key="index" class="list-group-item">
-            <img v-lazy="item.avatar" alt class="avatar">
-            <span class="name" v-html="item.name"/>
+          <li
+            v-for="(singer,index) in group.list"
+            :key="index"
+            class="list-group-item"
+            @click="selectSinger(singer)"
+          >
+            <img v-lazy="singer.avatar" alt class="avatar">
+            <span class="name" v-html="singer.name"/>
           </li>
         </ul>
       </li>
@@ -15,25 +27,34 @@
       class="list-shortcut"
       @touchstart="onShortcutTouchStart"
       @touchmove.stop.prevent="onShortcutTouchMove"
-      @touchend="onShortcutTouchEnd"
     >
       <ul>
         <li
           v-for="(item, index) in shortcutList"
           :key="index"
           class="item"
+          :class="{current: index === currentIndex}"
           :data-index="index"
         >{{item}}</li>
       </ul>
+    </div>
+    <div class="list-fixed" v-show="scrollY <= 0" ref="fixed">
+      <h1 class="fixed-title">{{fixedTitle}}</h1>
+    </div>
+    <div class="loading-container" v-show="data.length === 0">
+      <Loading/>
     </div>
   </Scroll>
 </template>
 
 <script type="text/ecmascript-6">
 import Scroll from "@/base/scroll";
+import Loading from "@/base/loading";
 import { getData } from "@/common/js/dom";
 
 const ANCHOR_HEIGHT = 18;
+const HOT_NAME = "热门";
+const TITLE_HEIGHT = 30;
 
 export default {
   props: {
@@ -44,14 +65,27 @@ export default {
       }
     }
   },
+  data() {
+    return {
+      scrollY: -1,
+      currentIndex: 0,
+      diff: -1
+    };
+  },
   created() {
     this.touch = {};
+    this.listHeight = [];
   },
   computed: {
     shortcutList() {
       return this.data.map(item => {
         return item.title.slice(0, 1);
       });
+    },
+    fixedTitle() {
+      return this.data[this.currentIndex]
+        ? this.data[this.currentIndex]["title"]
+        : HOT_NAME;
     }
   },
   methods: {
@@ -67,15 +101,72 @@ export default {
       this.touch.y2 = firstTouch.pageY;
       const delta = Math.floor((this.touch.y2 - this.touch.y1) / ANCHOR_HEIGHT);
       const anchorIndex = parseInt(this.touch.anchorIndex) + delta;
-      this._scrollTo(anchorIndex)
+      this._scrollTo(anchorIndex);
     },
-    onShortcutTouchEnd(e) {},
+    onWrapScroll(pos) {
+      this.scrollY = pos.y;
+    },
+    selectSinger(singer) {
+      this.$emit("selectSinger", singer);
+    },
     _scrollTo(index) {
+      if (index === null) {
+        return;
+      }
       this.$refs["listview"].scrollToElement(this.$refs["group"][index]);
+    },
+    _calculateHeight() {
+      this.listHeight = [];
+      const list = this.$refs["group"];
+      let height = 0;
+      this.listHeight.push(height);
+      list.forEach((item, index) => {
+        height += item.clientHeight;
+        this.listHeight.push(height);
+      });
+    }
+  },
+  watch: {
+    data() {
+      this.$nextTick(() => {
+        this._calculateHeight();
+      });
+    },
+    scrollY(newY) {
+      const listHeight = this.listHeight;
+      if (-newY < 0) {
+        this.currentIndex = 0;
+        return;
+      } else if (
+        -newY + this.$refs["listview"].$el.clientHeight >=
+        listHeight[listHeight.length - 1]
+      ) {
+        this.currentIndex = listHeight.length - 2;
+        return;
+      }
+      for (let i = 0; i < listHeight.length; i++) {
+        const heightTop = listHeight[i];
+        const heightDown = listHeight[i + 1];
+        if (-newY >= heightTop && -newY < heightDown) {
+          this.currentIndex = i;
+          this.diff = heightDown + newY;
+          return;
+        }
+      }
+    },
+    diff(newVal) {
+      const fixedTop =
+        newVal > 0 && newVal < TITLE_HEIGHT ? newVal - TITLE_HEIGHT : 0;
+      if (this.fixedTop === fixedTop) {
+        return;
+      }
+      this.fixedTop = fixedTop;
+      this.$refs["fixed"].style.transform = `translate3d(0, ${fixedTop}px, 0)`;
     }
   },
   components: {
-    Scroll
+    Scroll,
+    Loading
   }
 };
 </script>
