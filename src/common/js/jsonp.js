@@ -47,29 +47,3 @@ export default function jsonp(url, opts) {
 // 链接：https://juejin.im/post/5c7e89d65188255dce5dda11
 // 来源：掘金
 // 著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
-
-/* 示例
-
-const opts = {
-  data: {
-    g_tk: 1928093487,
-    inCharset: 'utf-8',
-    outCharset: 'utf-8',
-    notice: 0,
-    format: 'jsonp',
-    platform: 'h5',
-    uin: 0,
-    needNewCode: 1
-  },
-  param: 'jsonpCallback'
-}
-
-jsonp(url, opts)
-  .then(res => {
-    console.log(res);
-  })
-  .catch(ex => {
-    console.log(ex);
-  })
-
-*/

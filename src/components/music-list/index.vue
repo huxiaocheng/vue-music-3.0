@@ -6,7 +6,7 @@
     <h1 class="title" v-html="title"/>
     <div class="bg-image" :style="bgStyle" ref="bgImage">
       <div class="play-wrapper" v-show="songs.length > 0" ref="playBtn">
-        <div class="play">
+        <div class="play" @click="random">
           <i class="icon-play"/>
           <span class="text">随机播放全部</span>
         </div>
@@ -23,7 +23,7 @@
       @scroll="musicScroll"
     >
       <div class="song-list-wrapper">
-        <SongList :songs="songs"/>
+        <SongList :songs="songs" @select="selectSong"/>
       </div>
       <div class="loading-container" v-show="songs.length === 0">
         <Loading/>
@@ -37,6 +37,7 @@ import Scroll from "@/base/scroll";
 import SongList from "@/base/song-list";
 import { prefixStyle } from "@/common/js/dom";
 import Loading from "@/base/loading";
+import { mapActions } from "vuex";
 
 const RESERVED_HEIGHT = 40;
 const transform = prefixStyle("transform");
@@ -73,6 +74,17 @@ export default {
     }
   },
   methods: {
+    random() {
+      this.randomPlay({ 
+        list: this.songs 
+      });
+    },
+    selectSong(song, index) {
+      this.selectPlay({
+        list: this.songs,
+        index
+      });
+    },
     musicScroll(pos) {
       this.scrollY = pos.y;
     },
@@ -82,7 +94,8 @@ export default {
     _setBgHieght() {
       this.bgImageHeight = this.$refs["bgImage"].clientHeight;
       this.$refs["list"].$el.style["top"] = `${this.bgImageHeight}px`;
-    }
+    },
+    ...mapActions(["selectPlay", "randomPlay"])
   },
   watch: {
     scrollY(newY) {
@@ -111,7 +124,7 @@ export default {
       }
       this.$refs["bgImage"].style["z-index"] = zIndex;
       this.$refs["bgImage"].style[transform] = `scale(${scale})`;
-      this.$refs["filter"].style[backdrop] = `blur${blur}px`;
+      this.$refs["filter"].style[backdrop] = `blur(${blur}px)`;
     }
   },
   components: {
