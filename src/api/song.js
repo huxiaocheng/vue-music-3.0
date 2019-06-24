@@ -3,13 +3,32 @@ import { getUid } from '@/common/js/uid'
 import axios from 'axios'
 import { ERR_OK } from '@/api/config'
 
+export function getLyric (mid) {
+  const url = '/api/lyric'
+  const data = Object.assign({}, commonParams, {
+    songmid: mid,
+    platform: 'yqq',
+    hostUin: 0,
+    needNewCode: 0,
+    categoryId: 10000000,
+    pcachetime: +new Date(),
+    format: 'json'
+  })
+
+  return axios.get(url, {
+    params: data
+  }).then(res => {
+    return res.data
+  })
+}
+
 export function getSongsUrl(songs) {
   const url = '/api/getPurlUrl'
 
   const mids = []
   const types = []
 
-  songs.forEach((song) => {
+  songs.forEach(song => {
     mids.push(song.mid)
     types.push(0)
   })
@@ -31,13 +50,13 @@ export function getSongsUrl(songs) {
       return axios.post(url, {
         comm: data,
         req_0: urlMid
-      }).then((response) => {
+      }).then(response => {
         const res = response.data
         if (res.code === ERR_OK) {
           let urlMid = res.req_0
           if (urlMid && urlMid.code === ERR_OK) {
             const purlMap = {}
-            urlMid.data.midurlinfo.forEach((item) => {
+            urlMid.data.midurlinfo.forEach(item => {
               if (item.purl) {
                 purlMap[item.songmid] = item.purl
               }
