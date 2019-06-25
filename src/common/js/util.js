@@ -1,3 +1,3 @@
 export function shuffle(arr) {
-  return [...arr].sort((a, b) => Math.random() - 0.5)
+  return [...arr].sort(() => Math.random() - 0.5)
 }
