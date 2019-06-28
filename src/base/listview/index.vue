@@ -109,6 +109,9 @@ export default {
     selectSinger(singer) {
       this.$emit("selectSinger", singer);
     },
+    refresh() {
+      this.$refs['listview'].refresh();
+    },
     _scrollTo(index) {
       if (index === null) {
         return;
