@@ -3,7 +3,7 @@
     <div class="search-box-wrapper">
       <SearchBox v-model="query" ref="searchBox" />
     </div>
-    <div class="shortcut-wrapper" v-show="!query">
+    <div class="shortcut-wrapper" v-show="!query" ref="shortcut-wrapper">
       <Scroll class="shortcut" :data="shortcut" ref="shortcut">
         <div>
           <div class="hot-key">
@@ -33,8 +33,8 @@
         </div>
       </Scroll>
     </div>
-    <div class="search-result" v-show="query">
-      <Suggest :query="query" @scrollStart="scrollStart" @select="saveSearchItem" />
+    <div class="search-result" v-show="query" ref="search-result">
+      <Suggest ref="suggest" :query="query" @scrollStart="scrollStart" @select="saveSearchItem" />
     </div>
     <Confirm ref="confirm" @confirm="clearSearch" />
     <router-view />
@@ -50,8 +50,10 @@ import { mapActions, mapGetters } from "vuex";
 import SearchList from "@/base/search-list";
 import Confirm from "@/base/confirm";
 import Scroll from "@/base/scroll";
+import { playlistMixin } from "@/common/js/mixin";
 
 export default {
+  mixins: [playlistMixin],
   data() {
     return {
       hotKey: [],
@@ -68,6 +70,13 @@ export default {
     ...mapGetters(["history"])
   },
   methods: {
+    handlePlayList(list) {
+      const bottom = list.length > 0 ? "60px" : "";
+      this.$refs["shortcut-wrapper"].style["bottom"] = bottom;
+      this.$refs["search-result"].style["bottom"] = bottom;
+      this.$refs["shortcut"].refresh();
+      this.$refs["suggest"].refresh();
+    },
     showConfirm() {
       this.$refs["confirm"].show();
     },

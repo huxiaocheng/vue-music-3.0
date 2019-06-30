@@ -22,10 +22,10 @@
           <p class="text" v-html="getDisplayName(item)"></p>
         </div>
       </li>
-      <Loading v-show="hasMore" title/>
+      <Loading v-show="hasMore" title />
     </ul>
     <div class="no-result-wrapper" v-show="!result.length && !hasMore">
-      <NoResult/>
+      <NoResult />
     </div>
   </Scroll>
 </template>
@@ -83,7 +83,6 @@ export default {
         this.setSinger(singer);
         this.$router.push(`/search/${singer.id}`);
       } else {
-        console.log(item);
         this.insertSong(item);
       }
       this.$emit("select", item);

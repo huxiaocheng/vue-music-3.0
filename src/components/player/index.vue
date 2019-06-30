@@ -9,14 +9,14 @@
     >
       <div class="normal-player" v-show="fullScreen">
         <div class="background">
-          <img width="100%" height="100%" :src="currentSong.image">
+          <img width="100%" height="100%" :src="currentSong.image" />
         </div>
         <div class="top">
           <div class="back" @click="back">
-            <i class="icon-back"/>
+            <i class="icon-back" />
           </div>
-          <h1 class="title" v-html="currentSong.name"/>
-          <h1 class="subtitle" v-html="currentSong.singer"/>
+          <h1 class="title" v-html="currentSong.name" />
+          <h1 class="subtitle" v-html="currentSong.singer" />
         </div>
         <div
           class="middle"
@@ -27,7 +27,7 @@
           <div class="middle-l" ref="middle-l">
             <div class="cd-wrapper" ref="cd-wrapper">
               <div class="cd" ref="imageWrapper">
-                <img ref="image" :class="cdRotate" class="image" :src="currentSong.image">
+                <img ref="image" :class="cdRotate" class="image" :src="currentSong.image" />
               </div>
             </div>
             <div class="playing-lyric-wrapper">
@@ -50,31 +50,31 @@
         </div>
         <div class="bottom">
           <div class="dot-wrapper">
-            <span class="dot" :class="{active: currentShow === 'cd'}"/>
-            <span class="dot" :class="{active: currentShow === 'lyric'}"/>
+            <span class="dot" :class="{active: currentShow === 'cd'}" />
+            <span class="dot" :class="{active: currentShow === 'lyric'}" />
           </div>
           <div class="progress-wrapper">
             <span class="time tile-l">{{this.format(currentTime)}}</span>
             <div class="progress-bar-wrapper">
-              <ProgressBar :percent="percent" @percentChange="onProgressBarChange"/>
+              <ProgressBar :percent="percent" @percentChange="onProgressBarChange" />
             </div>
             <span class="time time-r">{{format(currentSong.duration)}}</span>
           </div>
           <div class="operators">
             <div class="icon i-left">
-              <i :class="iconMode" @click="changeMode"/>
+              <i :class="iconMode" @click="changeMode" />
             </div>
             <div class="icon i-left" :class="disable">
-              <i class="icon-prev" @click="prev"/>
+              <i class="icon-prev" @click="prev" />
             </div>
             <div class="icon i-center" :class="disable">
-              <i :class="playIcon" @click="togglePlaying"/>
+              <i :class="playIcon" @click="togglePlaying" />
             </div>
             <div class="icon i-right" :class="disable">
-              <i class="icon-next" @click="next"/>
+              <i class="icon-next" @click="next" />
             </div>
             <div class="icon i-right">
-              <i class="icon icon-not-favorite"/>
+              <i class="icon icon-not-favorite" />
             </div>
           </div>
         </div>
@@ -84,23 +84,24 @@
       <div class="mini-player" v-show="!fullScreen" @click="open">
         <div class="icon">
           <div class="imgWrapper">
-            <img width="40" height="40" :src="currentSong.image" :class="cdRotate">
+            <img width="40" height="40" :src="currentSong.image" :class="cdRotate" />
           </div>
         </div>
         <div class="text">
-          <h2 class="name" v-html="currentSong.name"/>
-          <p class="desc" v-html="currentSong.singer"/>
+          <h2 class="name" v-html="currentSong.name" />
+          <p class="desc" v-html="currentSong.singer" />
         </div>
         <div class="control">
           <ProgressCircle :radius="32" :percent="percent">
-            <i :class="miniIcon" class="icon-mini" @click.stop="togglePlaying"/>
+            <i :class="miniIcon" class="icon-mini" @click.stop="togglePlaying" />
           </ProgressCircle>
         </div>
         <div class="control" @click.stop>
-          <i class="icon-playlist"/>
+          <i class="icon-playlist" @click.stop='showPlsyList'/>
         </div>
       </div>
     </transition>
+    <PlayList ref='play-list'/>
     <audio
       ref="audio"
       :src="currentSong.url"
@@ -122,6 +123,7 @@ import Scroll from "@/base/scroll";
 import { playMode } from "@/common/js/config";
 import { shuffle } from "@/common/js/util";
 import Lyric from "lyric-parser";
+import PlayList from "@/components/playlist";
 
 const transform = prefixStyle("transform");
 const transitionDuration = prefixStyle("transitionDuration");
@@ -174,6 +176,9 @@ export default {
     ])
   },
   methods: {
+    showPlsyList() {
+      this.$refs['play-list'].show();
+    },
     middleTouchStart(e) {
       this.touch.initiated = true;
       this.touch.move = false;
@@ -463,7 +468,8 @@ export default {
   components: {
     ProgressBar,
     ProgressCircle,
-    Scroll
+    Scroll,
+    PlayList
   }
 };
 </script>
