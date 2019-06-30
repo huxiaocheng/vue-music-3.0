@@ -2,7 +2,7 @@ import * as types from './types'
 import { playMode } from '@/common/js/config'
 import { shuffle } from '@/common/js/util';
 import { getSongsUrl } from '@/api/song';
-import { saveSearchHistory } from '@/common/js/cache';
+import { saveSearchHistory, delSearchHistory, clearSearchHistory } from '@/common/js/cache';
 
 export const selectPlay = ({ commit, state }, { list, index }) => {
   commit(types.SET_SEQUENCE_LIST, list)
@@ -63,6 +63,14 @@ export const insertSong = ({ commit, state }, song) => {
 
 export const saveSearch = ({ commit }, query) => {
   commit(types.SET_SEARCH_HISTORY, saveSearchHistory(query))
+}
+
+export const delSearch = ({ commit, state }, query) => {
+  commit(types.SET_SEARCH_HISTORY, delSearchHistory(state.searchHistory, query))
+}
+
+export const clearSearch = ({ commit }) => {
+  commit(types.SET_SEARCH_HISTORY, clearSearchHistory());
 }
 
 function findIndex(list, song) {

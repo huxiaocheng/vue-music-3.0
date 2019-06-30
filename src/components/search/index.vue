@@ -1,27 +1,43 @@
 <template>
   <div class="search">
     <div class="search-box-wrapper">
-      <SearchBox v-model="query" ref="searchBox"/>
+      <SearchBox v-model="query" ref="searchBox" />
     </div>
     <div class="shortcut-wrapper" v-show="!query">
-      <div class="shortcut">
-        <div class="hot-key">
-          <h1 class="title">热门搜索</h1>
-          <ul>
-            <li
-              v-for="item in hotKey"
-              :key="item.n"
-              class="item"
-              @click="addQuery(item.k)"
-            >{{item.k}}</li>
-          </ul>
+      <Scroll class="shortcut" :data="shortcut" ref="shortcut">
+        <div>
+          <div class="hot-key">
+            <h1 class="title">热门搜索</h1>
+            <ul>
+              <li
+                v-for="item in hotKey"
+                :key="item.n"
+                class="item"
+                @click="addQuery(item.k)"
+              >{{item.k}}</li>
+            </ul>
+          </div>
+          <div class="search-history" v-show="history.length > 0">
+            <h1 class="title">
+              <span class="text">搜索历史</span>
+              <span class="clear" @click.stop="showConfirm">
+                <i class="icon-clear"></i>
+              </span>
+            </h1>
+            <SearchList
+              :searches="history"
+              @deleteOneQuery="delSearch"
+              @selectOneHistory="addQuery"
+            />
+          </div>
         </div>
-      </div>
+      </Scroll>
     </div>
     <div class="search-result" v-show="query">
-      <Suggest :query="query" @scrollStart="scrollStart" @select="saveSearchItem"/>
+      <Suggest :query="query" @scrollStart="scrollStart" @select="saveSearchItem" />
     </div>
-    <router-view/>
+    <Confirm ref="confirm" @confirm="clearSearch" />
+    <router-view />
   </div>
 </template>
 
@@ -30,7 +46,10 @@ import SearchBox from "@/base/search-box";
 import Suggest from "@/components/suggest";
 import { getHotKey } from "@/api/search";
 import { ERR_OK } from "@/api/config";
-import { mapActions } from "vuex";
+import { mapActions, mapGetters } from "vuex";
+import SearchList from "@/base/search-list";
+import Confirm from "@/base/confirm";
+import Scroll from "@/base/scroll";
 
 export default {
   data() {
@@ -42,7 +61,16 @@ export default {
   created() {
     this._getHotKey();
   },
+  computed: {
+    shortcut() {
+      return this.hotKey.concat(this.history);
+    },
+    ...mapGetters(["history"])
+  },
   methods: {
+    showConfirm() {
+      this.$refs["confirm"].show();
+    },
     saveSearchItem() {
       this.saveSearch(this.query);
     },
@@ -59,11 +87,23 @@ export default {
         }
       });
     },
-    ...mapActions(["saveSearch"])
+    ...mapActions(["saveSearch", "delSearch", "clearSearch"])
+  },
+  watch: {
+    query(newQuery) {
+      if (!newQuery) {
+        this.$nextTick(() => {
+          this.$refs["shortcut"].refresh();
+        });
+      }
+    }
   },
   components: {
     SearchBox,
-    Suggest
+    Suggest,
+    SearchList,
+    Confirm,
+    Scroll
   }
 };
 </script>

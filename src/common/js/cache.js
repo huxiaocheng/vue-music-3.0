@@ -13,7 +13,20 @@ export function saveSearchHistory(query) {
 }
 
 export function loadSearch() {
-  return storage.get(SEARCH_MAX_LEN, []);
+  return storage.get(SEARCH_KEY, []);
+}
+
+export function delSearchHistory(searchs, query) {
+  const index = searchs.findIndex(item => item === query);
+  const list = [...searchs];
+  list.splice(index, 1);
+  storage.set(SEARCH_KEY, list);
+  return list;
+}
+
+export function clearSearchHistory() {
+  storage.remove(SEARCH_KEY);
+  return [];
 }
 
 function insertArray(arr, val, compareFn, maxLen) {
