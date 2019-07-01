@@ -97,11 +97,11 @@
           </ProgressCircle>
         </div>
         <div class="control" @click.stop>
-          <i class="icon-playlist" @click.stop='showPlsyList'/>
+          <i class="icon-playlist" @click.stop="showPlsyList" />
         </div>
       </div>
     </transition>
-    <PlayList ref='play-list'/>
+    <PlayList ref="play-list" />
     <audio
       ref="audio"
       :src="currentSong.url"
@@ -120,15 +120,16 @@ import { prefixStyle } from "@/common/js/dom";
 import ProgressBar from "@/base/progress-bar";
 import ProgressCircle from "@/base/progress-circle";
 import Scroll from "@/base/scroll";
-import { playMode } from "@/common/js/config";
-import { shuffle } from "@/common/js/util";
 import Lyric from "lyric-parser";
 import PlayList from "@/components/playlist";
+import { playerMixin } from "@/common/js/mixin";
+import { playMode } from "@/common/js/config";
 
 const transform = prefixStyle("transform");
 const transitionDuration = prefixStyle("transitionDuration");
 
 export default {
+  mixins: [playerMixin],
   data() {
     return {
       songReady: false,
@@ -143,13 +144,6 @@ export default {
     this.touch = {};
   },
   computed: {
-    iconMode() {
-      return this.mode === playMode.sequence
-        ? "icon-sequence"
-        : this.mode === playMode.loop
-        ? "icon-loop"
-        : "icon-random";
-    },
     percent() {
       return this.currentTime / this.currentSong.duration;
     },
@@ -165,19 +159,11 @@ export default {
     cdRotate() {
       return this.playing ? "play" : "play pause";
     },
-    ...mapGetters([
-      "fullScreen",
-      "playlist",
-      "currentSong",
-      "playing",
-      "currentIndex",
-      "mode",
-      "sequenceList"
-    ])
+    ...mapGetters(["fullScreen", "currentSong", "playing"])
   },
   methods: {
     showPlsyList() {
-      this.$refs['play-list'].show();
+      this.$refs["play-list"].show();
     },
     middleTouchStart(e) {
       this.touch.initiated = true;
@@ -240,29 +226,6 @@ export default {
       this.$refs["lyricList"].$el.style[transitionDuration] = `${time}ms`;
       this.$refs["middle-l"].style["opacity"] = opacity;
       this.$refs["middle-l"].style[transitionDuration] = `${time}ms`;
-    },
-    changeMode() {
-      const mode =
-        this.mode === playMode.sequence
-          ? playMode.loop
-          : this.mode === playMode.loop
-          ? playMode.random
-          : playMode.sequence;
-      this.setPlayMode(mode);
-      let list = [];
-      if (mode === playMode.random) {
-        list = shuffle(this.sequenceList);
-      } else {
-        list = this.sequenceList;
-      }
-      this.resetCurrentIndex(list);
-      this.setPlayList(list);
-    },
-    resetCurrentIndex(list) {
-      const index = list.findIndex(item => {
-        return item.id === this.currentSong["id"];
-      });
-      this.setCurrentIndex(index);
     },
     onProgressBarChange(percent) {
       const currentTime = this.currentSong.duration * percent;
@@ -438,16 +401,12 @@ export default {
       };
     },
     ...mapMutations({
-      setFullScreen: "SET_FULL_SCREEN",
-      setPlayingState: "SET_PLAYING_STATE",
-      setCurrentIndex: "SET_CURRENT_INDEX",
-      setPlayMode: "SET_PLAY_MODE",
-      setPlayList: "SET_PLAYLIST"
+      setFullScreen: "SET_FULL_SCREEN"
     })
   },
   watch: {
     currentSong(newSong, oldSong) {
-      if (newSong.id === oldSong.id) {
+      if (!newSong.id || newSong.id === oldSong.id) {
         return;
       }
       if (this.currentLyric) {

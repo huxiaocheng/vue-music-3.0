@@ -73,6 +73,33 @@ export const clearSearch = ({ commit }) => {
   commit(types.SET_SEARCH_HISTORY, clearSearchHistory());
 }
 
+export const deleteSong = ({ commit, state }, song) => {
+  // debugger
+  let { currentIndex } = state;
+  const playlist = state.playlist.slice();
+  const sequenceList = state.sequenceList.slice();
+  const pIndex = findIndex(playlist, song);
+  playlist.splice(pIndex, 1);
+  const sIndex = findIndex(sequenceList, song);
+  sequenceList.splice(sIndex, 1);
+
+  if (currentIndex > pIndex || currentIndex === playlist.length) {
+    currentIndex--;
+  }
+
+  commit(types.SET_PLAYLIST, playlist);
+  commit(types.SET_SEQUENCE_LIST, sequenceList);
+  commit(types.SET_CURRENT_INDEX, currentIndex);
+  commit(types.SET_PLAYING_STATE, playlist.length > 0);
+}
+
+export const deleteSongList = ({ commit }) => {
+  commit(types.SET_PLAYLIST, []);
+  commit(types.SET_SEQUENCE_LIST, []);
+  commit(types.SET_CURRENT_INDEX, -1);
+  commit(types.SET_PLAYING_STATE, false);
+}
+
 function findIndex(list, song) {
   return list.findIndex(item => {
     return item.id === song.id

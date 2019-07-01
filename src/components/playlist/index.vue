@@ -4,9 +4,9 @@
       <div class="list-wrapper" @click.stop>
         <div class="list-header">
           <h1 class="title">
-            <i class="icon"></i>
-            <span class="text"></span>
-            <span class="clear">
+            <i class="icon" :class="iconMode" @click="changeMode"></i>
+            <span class="text">{{modeText}}</span>
+            <span class="clear" @click="showConfirm">
               <i class="icon-clear"></i>
             </span>
           </h1>
@@ -26,7 +26,7 @@
                 <span class="like">
                   <i class="icon-not-favorite"></i>
                 </span>
-                <span class="delete">
+                <span class="delete" @click.stop="deleteOne(item)">
                   <i class="icon-delete"></i>
                 </span>
               </li>
@@ -43,31 +43,48 @@
           <span>关闭</span>
         </div>
       </div>
+      <Conifrm ref="confirm" text="是否清空播放列表" ConfirmBtnText="清空" @confirm="confirmClear" />
     </div>
   </transition>
 </template>
 
 <script>
-import { mapGetters, mapMutations, mapActions } from "vuex";
+import { mapActions } from "vuex";
 import { playMode } from "@/common/js/config";
 import Scroll from "@/base/scroll";
+import Conifrm from "@/base/confirm";
+import { playerMixin } from "@/common/js/mixin";
 
 export default {
+  mixins: [playerMixin],
   data() {
     return {
       showFlag: false
     };
   },
   computed: {
-    ...mapGetters([
-      "sequenceList",
-      "playlist",
-      "currentSong",
-      "mode",
-      "currentIndex"
-    ])
+    modeText() {
+      return this.mode === playMode.sequence
+        ? "顺序播放"
+        : this.mode === playMode.random
+        ? "随机播放"
+        : "单曲循环";
+    }
   },
   methods: {
+    confirmClear() {
+      this.deleteSongList();
+      this.hide();
+    },
+    showConfirm() {
+      this.$refs["confirm"].show();
+    },
+    deleteOne(item) {
+      this.deleteSong(item);
+      if (!this.playlist.length) {
+        this.hide();
+      }
+    },
     getCurrentIcon(item) {
       if (this.currentSong.id === item.id) {
         return "icon-play";
@@ -82,7 +99,7 @@ export default {
         index = this.playlist.findIndex(song => song.id === item.id);
       }
       this.setPlayingState(true);
-      this.setcurrentIndex(index);
+      this.setCurrentIndex(index);
     },
     show() {
       this.showFlag = true;
@@ -94,17 +111,17 @@ export default {
       this.showFlag = false;
     },
     scrollToCurrent(current) {
-      const index = this.sequenceList.findIndex(item => item.id === current.id);
-      this.$refs["list-content"].scrollToElement(
-        this.$refs["item"][index],
-        300
-      );
+      setTimeout(() => {
+        const index = this.sequenceList.findIndex(
+          item => item.id === current.id
+        );
+        this.$refs["list-content"].scrollToElement(
+          this.$refs["item"][index],
+          300
+        );
+      }, 101);
     },
-    ...mapMutations({
-      setcurrentIndex: "SET_CURRENT_INDEX",
-      setPlayingState: "SET_PLAYING_STATE"
-    }),
-    ...mapActions(["selectPlay"])
+    ...mapActions(["deleteSong", "deleteSongList"])
   },
   watch: {
     currentSong(newSong, oldSong) {
@@ -117,7 +134,8 @@ export default {
     }
   },
   components: {
-    Scroll
+    Scroll,
+    Conifrm
   }
 };
 </script>

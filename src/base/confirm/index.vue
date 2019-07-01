@@ -4,7 +4,7 @@
       <div class="confirm-wrapper">
         <div class="confirm-content">
           <p class="text">{{title}}</p>
-          <div class="operate">
+          <div class="operate" @click.stop>
             <div class="operate-btn left" @click="hide">{{cancelBtnText}}</div>
             <div class="operate-btn" @click="confirm">{{ConfirmBtnText}}</div>
           </div>
