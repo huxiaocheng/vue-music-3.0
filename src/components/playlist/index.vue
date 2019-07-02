@@ -34,7 +34,7 @@
           </div>
         </Scroll>
         <div class="list-operate">
-          <div class="add">
+          <div class="add" @click="addSongToList">
             <i class="icon-add"></i>
             <span class="text">添加歌曲到队列</span>
           </div>
@@ -44,6 +44,7 @@
         </div>
       </div>
       <Conifrm ref="confirm" text="是否清空播放列表" ConfirmBtnText="清空" @confirm="confirmClear" />
+      <AddSong ref="addSong" />
     </div>
   </transition>
 </template>
@@ -54,6 +55,7 @@ import { playMode } from "@/common/js/config";
 import Scroll from "@/base/scroll";
 import Conifrm from "@/base/confirm";
 import { playerMixin } from "@/common/js/mixin";
+import AddSong from "@/components/add-song";
 
 export default {
   mixins: [playerMixin],
@@ -72,6 +74,9 @@ export default {
     }
   },
   methods: {
+    addSongToList() {
+      this.$refs["addSong"].show();
+    },
     confirmClear() {
       this.deleteSongList();
       this.hide();
@@ -135,7 +140,8 @@ export default {
   },
   components: {
     Scroll,
-    Conifrm
+    Conifrm,
+    AddSong
   }
 };
 </script>
