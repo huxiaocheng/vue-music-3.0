@@ -1,6 +1,6 @@
 <template>
   <div ref="wrapper">
-    <slot/>
+    <slot />
   </div>
 </template>
 
@@ -33,6 +33,10 @@ export default {
     beforeScroll: {
       type: Boolean,
       default: false
+    },
+    refreshDelay: {
+      type: Number,
+      default: 100
     }
   },
   mounted() {
@@ -85,9 +89,9 @@ export default {
   },
   watch: {
     data() {
-      this.$nextTick(() => {
+      setTimeout(() => {
         this.refresh();
-      });
+      }, this.refreshDelay);
     }
   }
 };

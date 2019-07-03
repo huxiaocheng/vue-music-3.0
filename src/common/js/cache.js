@@ -1,7 +1,10 @@
 import storage from '@/common/js/storage'
 
-export const SEARCH_KEY = '__search__';
+const SEARCH_KEY = '__search__';
 const SEARCH_MAX_LEN = 15;
+
+const PLAY_KEY = '__play__';
+const PLAY_MAX_LEN = 200;
 
 export function saveSearchHistory(query) {
   const searchs = storage.get(SEARCH_KEY, [])
@@ -27,6 +30,19 @@ export function delSearchHistory(searchs, query) {
 export function clearSearchHistory() {
   storage.remove(SEARCH_KEY);
   return [];
+}
+
+export function savePlay(song) {
+  let songs = storage.get(PLAY_KEY, []);
+  insertArray(songs, song, item => {
+    return item.id === song.id;
+  }, PLAY_MAX_LEN);
+  storage.set(PLAY_KEY, songs);
+  return songs;
+}
+
+export function loadPlay() {
+  return storage.get(PLAY_KEY, []);
 }
 
 function insertArray(arr, val, compareFn, maxLen) {

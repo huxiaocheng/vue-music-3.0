@@ -72,7 +72,10 @@ export const playerMixin = {
       setPlayList: "SET_PLAYLIST",
       setPlayingState: "SET_PLAYING_STATE",
       setCurrentIndex: "SET_CURRENT_INDEX"
-    })
+    }),
+    ...mapActions([
+      'savePlayHistory'
+    ])
   }
 }
 
@@ -92,8 +95,11 @@ export const searchMixin = {
     scrollStart() {
       this.$refs["searchBox"].blur();
     },
+    addQuery(query) {
+      this.query = query;
+    },
     ...mapActions([
-      
+      'saveSearch', 'delSearch'
     ])
   }
 }

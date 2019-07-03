@@ -11,7 +11,7 @@
             </span>
           </h1>
         </div>
-        <Scroll class="list-content" ref="list-content" :data="sequenceList">
+        <Scroll :refreshDelay="100" class="list-content" ref="list-content" :data="sequenceList">
           <div>
             <transition-group name="list" tag="ul">
               <li
@@ -116,15 +116,11 @@ export default {
       this.showFlag = false;
     },
     scrollToCurrent(current) {
-      setTimeout(() => {
-        const index = this.sequenceList.findIndex(
-          item => item.id === current.id
-        );
-        this.$refs["list-content"].scrollToElement(
-          this.$refs["item"][index],
-          300
-        );
-      }, 101);
+      const index = this.sequenceList.findIndex(item => item.id === current.id);
+      this.$refs["list-content"].scrollToElement(
+        this.$refs["item"][index],
+        300
+      );
     },
     ...mapActions(["deleteSong", "deleteSongList"])
   },

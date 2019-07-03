@@ -242,6 +242,7 @@ export default {
     },
     ready() {
       this.songReady = true;
+      this.savePlayHistory(this.currentSong);
     },
     playEnd() {
       if (this.mode === playMode.loop) {

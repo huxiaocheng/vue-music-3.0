@@ -4,7 +4,7 @@
       <SearchBox v-model="query" ref="searchBox" />
     </div>
     <div class="shortcut-wrapper" v-show="!query" ref="shortcut-wrapper">
-      <Scroll class="shortcut" :data="shortcut" ref="shortcut">
+      <Scroll :refreshDelay='100' class="shortcut" :data="shortcut" ref="shortcut">
         <div>
           <div class="hot-key">
             <h1 class="title">热门搜索</h1>
@@ -78,9 +78,6 @@ export default {
     showConfirm() {
       this.$refs["confirm"].show();
     },
-    addQuery(query) {
-      this.query = query;
-    },
     _getHotKey() {
       getHotKey().then(res => {
         if (res.code === ERR_OK) {
@@ -88,7 +85,7 @@ export default {
         }
       });
     },
-    ...mapActions(["saveSearch", "delSearch", "clearSearch"])
+    ...mapActions(["clearSearch"])
   },
   watch: {
     query(newQuery) {
