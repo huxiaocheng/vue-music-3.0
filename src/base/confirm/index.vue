@@ -52,7 +52,6 @@ export default {
 
 <style scoped lang="stylus">
 @import '~@/common/stylus/variable';
-
 .confirm {
   position: fixed;
   left: 0;
@@ -61,27 +60,22 @@ export default {
   bottom: 0;
   z-index: 998;
   background-color: $color-background-d;
-
   &.confirm-fade-enter-active {
     animation: confirm-fadein 0.3s;
-
     .confirm-content {
       animation: confirm-zoom 0.3s;
     }
   }
-
   .confirm-wrapper {
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     z-index: 999;
-
     .confirm-content {
       width: 270px;
       border-radius: 13px;
       background: $color-highlight-background;
-
       .text {
         padding: 19px 15px;
         line-height: 22px;
@@ -89,13 +83,11 @@ export default {
         font-size: $font-size-large;
         color: $color-text-l;
       }
-
       .operate {
         display: flex;
         align-items: center;
         text-align: center;
         font-size: $font-size-large;
-
         .operate-btn {
           flex: 1;
           line-height: 22px;
@@ -111,26 +103,21 @@ export default {
     }
   }
 }
-
 @keyframes confirm-fadein {
   0% {
     opacity: 0;
   }
-
   100% {
     opacity: 1;
   }
 }
-
 @keyframes confirm-zoom {
   0% {
     transform: scale(0);
   }
-
   50% {
     transform: scale(1.1);
   }
-
   100% {
     transform: scale(1);
   }
