@@ -19,7 +19,7 @@ export default {
   props: {
     title: {
       type: String,
-      default: "确认清空所有历史纪录吗?"
+      default: "确认清空所有历史纪录吗? "
     },
     ConfirmBtnText: {
       type: String,
