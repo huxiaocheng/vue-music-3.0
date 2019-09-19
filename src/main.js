@@ -5,8 +5,11 @@ import router from '@/router'
 import store from '@/store'
 import fastclick from 'fastclick'
 import VueLazyload from 'vue-lazyload'
+import Confirm from './base/confirm/index';
 
 import '@/common/stylus/index.styl'
+
+Vue.prototype.$Confirm = Confirm;
 
 fastclick.attach(document.body)
 Vue.use(VueLazyload, {

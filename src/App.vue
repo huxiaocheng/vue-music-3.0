@@ -1,11 +1,12 @@
 <template>
   <div>
-    <MHeader/>
-    <Tab/>
+    <button @click="onClick">btn</button>
+    <!-- <MHeader />
+    <Tab />
     <keep-alive>
-      <router-view/>
+      <router-view />
     </keep-alive>
-    <Player/>
+    <Player />-->
   </div>
 </template>
 
@@ -15,6 +16,19 @@ import Tab from "@/components/tab";
 import Player from "@/components/player";
 
 export default {
+  methods: {
+    onClick() {
+      this.$Confirm({
+        title: "vue大法好!"
+      })
+        .then(confirm => {
+          console.log(confirm);
+        })
+        .catch(cancel => {
+          console.log(cancel);
+        });
+    }
+  },
   components: {
     MHeader,
     Tab,
